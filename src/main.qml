@@ -8,6 +8,7 @@ ApplicationWindow {
     visible: true
     width: 800
     height: 600
+    title: "ZimbleQ"
 
     Text {
         text: "Press \"Ctrl+O\" to open an image"

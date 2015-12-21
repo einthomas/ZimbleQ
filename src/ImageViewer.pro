@@ -2,6 +2,7 @@ TEMPLATE = app
 
 QT += qml quick
 CONFIG += c++11
+RC_ICONS = ../graphics/logo/ZimbleQ.ico
 
 SOURCES += main.cpp
 
