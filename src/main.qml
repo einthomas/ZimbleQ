@@ -23,6 +23,13 @@ ApplicationWindow {
             id: imgFrameTransform
         }
 
+        function reset() {
+            imgFrame.x = 0
+            imgFrame.y = 0
+            imgFrameTransform.xScale = 1.0
+            imgFrameTransform.yScale = 1.0
+        }
+
         Image {
             id: img
             asynchronous: true
@@ -38,17 +45,19 @@ ApplicationWindow {
             anchors.fill: parent
             drag.target: imgFrame
             onWheel: {
-                var x = wheel.x * imgFrameTransform.xScale;
-                var y = wheel.y * imgFrameTransform.yScale;
+                if (wheel.angleDelta.y > 0 || (wheel.angleDelta.y <= 0 && imgFrameTransform.xScale > 1.0 && imgFrameTransform.yScale > 1.0)) {
+                    var x = wheel.x * imgFrameTransform.xScale;
+                    var y = wheel.y * imgFrameTransform.yScale;
 
-                var zoomFactor = 1.2
-                if (wheel.angleDelta.y <= 0)
-                    zoomFactor = 1 / zoomFactor
+                    var zoomFactor = 1.2
+                    if (wheel.angleDelta.y <= 0)
+                        zoomFactor = 1 / zoomFactor
 
-                imgFrame.x += (1 - zoomFactor) * x;
-                imgFrame.y += (1 - zoomFactor) * y;
-                imgFrameTransform.xScale *= zoomFactor;
-                imgFrameTransform.yScale *= zoomFactor;
+                    imgFrame.x += (1 - zoomFactor) * x;
+                    imgFrame.y += (1 - zoomFactor) * y;
+                    imgFrameTransform.xScale *= zoomFactor;
+                    imgFrameTransform.yScale *= zoomFactor;
+                }
             }
         }
     }
@@ -68,12 +77,26 @@ ApplicationWindow {
                 shortcut: "Ctrl+G"
             }
 
+            MenuItem {
+                text: "Settings..."
+            }
+
             MenuSeparator { }
 
             MenuItem {
                 text: "Close"
                 shortcut: "Ctrl+Q"
                 onTriggered: Qt.quit()
+            }
+        }
+
+        Menu {
+            title: "View"
+
+            MenuItem {
+                text: "Reset view"
+                shortcut: "Ctrl+0"
+                onTriggered: imgFrame.reset()
             }
         }
 
@@ -89,6 +112,7 @@ ApplicationWindow {
         title: "Choose an image"
         folder: shortcuts.home
         onAccepted: {
+            imgFrame.reset()
             img.source = fileDialog.fileUrl
         }
         Component.onCompleted: visible = true
